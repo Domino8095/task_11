@@ -17,13 +17,21 @@ class Field:
 class Name(Field):
     pass
 
+def is_valid_birthday(value):
+        try :
+            datetime.strptime(value, '%Y-%m-%d')
+            return True
+        except ValueError:
+            return False
+
 class Birthday(Field):
     @Field.value.setter
-    def value(self, value: str):
-        try:
-            self._value = datetime.strptime(value, '%Y-%m-%d').date()
-        except ValueError:
-            raise ValueError(f"Invalid date format: {value}. Please use the format 'YYYY-MM-DD'.")
+    def __init__(self, value):
+        if not is_valid_birthday(value):
+            print(f"The birthday date don't added to record")
+            raise ValueError("Not valid birthday date")
+        super().__init__(value)
+    
 
 class Phone(Field):
     def __init__(self, value):

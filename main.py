@@ -17,33 +17,29 @@ class Field:
 class Name(Field):
     pass
 
-def is_valid_birthday(value):
-        try :
-            datetime.strptime(value, '%Y-%m-%d')
-            return True
-        except ValueError:
-            return False
-
 class Birthday(Field):
-    @Field.value.setter
-    def __init__(self, value):
-        if not is_valid_birthday(value):
-            print(f"The birthday date don't added to record")
-            raise ValueError("Not valid birthday date")
-        super().__init__(value)
-    
+    @property
+    def value(self):
+        return self.__value
+
+    @value.setter
+    def value(self, value):
+        try:
+            parsed_date = datetime.strptime(value, '%Y-%m-%d').date()
+            self.__value = parsed_date
+        except ValueError:
+            raise ValueError(f"Invalid date format: {value}. Please use the format 'YYYY-MM-DD'.")
 
 class Phone(Field):
-    def __init__(self, value):
-        if not isinstance(value, str) or not value.isdigit() or len(value) != 10:
-            raise ValueError("Invalid phone number")
-        super().__init__(value)
+    @property
+    def value(self):
+        return self.__value
 
-    @Field.value.setter
+    @value.setter
     def value(self, value):
         if not isinstance(value, str) or not value.isdigit() or len(value) != 10:
             raise ValueError("Invalid phone number")
-        super(Phone, Phone).value.__set__(self, value)
+        self.__value = value
 
 class Record:
     def __init__(self, name, birthday=None):
